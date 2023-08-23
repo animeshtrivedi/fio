@@ -1,0 +1,367 @@
+./oslib/libmtd.c:937:/* Patterns to write to a physical eraseblock when torturing it */
+./options.c:2048:			  { .ival = "io_uring",
+./options.c:2938:		.help	= "Ramp up time before measuring performance",
+./options.c:4440:		.help	= "Write log of bandwidth during run",
+./options.c:4450:		.help	= "Write log of latency during run",
+./options.c:4460:		.help	= "Write log of IOPS during run",
+./options.c:4514:		.help	= "Write log of latency histograms during run",
+./options.c:4997:		.help	= "Continue on non-fatal errors during IO",
+./examples/xnvme-compare.fio:7:; # Use the built-in io_uring engine to get baseline numbers
+./examples/xnvme-compare.fio:10:;   --ioengine=io_uring \
+./examples/xnvme-compare.fio:14:; # Use the xNVMe io-engine engine with Linux backend and io_uring async. impl.
+./examples/xnvme-compare.fio:19:;   --xnvme_async=io_uring \
+./examples/libblkio-io_uring.fio:14:libblkio_driver=io_uring
+./examples/uring-cmd-pi-sb.fio:1:# Protection information test with io_uring_cmd I/O engine for nvme-ns generic
+./examples/uring-cmd-pi-sb.fio:15:ioengine=io_uring_cmd
+./examples/uring-cmd-pi-ext.fio:1:# Protection information test with io_uring_cmd I/O engine for nvme-ns generic
+./examples/uring-cmd-pi-ext.fio:15:ioengine=io_uring_cmd
+./examples/uring-cmd-ng.fio:1:# io_uring_cmd I/O engine for nvme-ns generic character device
+./examples/uring-cmd-ng.fio:5:ioengine=io_uring_cmd
+./examples/uring-cmd-fdp.fio:1:# io_uring_cmd I/O engine for nvme-ns generic character device with FDP enabled
+./examples/uring-cmd-fdp.fio:10:ioengine=io_uring_cmd
+./examples/uring-cmd-zoned.fio:1:# io_uring_cmd I/O engine for nvme-ns generic zoned character device
+./examples/uring-cmd-zoned.fio:12:ioengine=io_uring_cmd
+./examples/xnvme-fdp.fio:5:; # Use the xNVMe io-engine engine io_uring_cmd async. impl.
+./examples/xnvme-fdp.fio:9:;   --xnvme_async=io_uring_cmd \
+./examples/filecreate-ioengine.fio:3:# create_on_open is needed so that the open happens during the run and not the
+./examples/xnvme-zoned.fio:9:; # Use the built-in io_uring engine to get baseline numbers
+./examples/xnvme-zoned.fio:12:;   --ioengine=io_uring \
+./examples/xnvme-zoned.fio:16:; # Use the xNVMe io-engine engine with Linux backend and io_uring async. impl.
+./examples/xnvme-zoned.fio:21:;   --xnvme_async=io_uring \
+./fio.1:1256:specific ways, ensuring that some parts of the data is more hot than others.
+./fio.1:1816:.B io_uring
+./fio.1:1821:.B io_uring_cmd
+./fio.1:2046:Execute 3rd party tools. Could be used to perform monitoring during jobs runtime.
+./fio.1:2050:flexibility to access GNU/Linux Kernel NVMe driver via libaio, IOCTLs, io_uring,
+./fio.1:2069:.BI (io_uring,libaio)cmdprio_percentage \fR=\fPint[,int]
+./fio.1:2079:.BI (io_uring,libaio)cmdprio_class \fR=\fPint[,int]
+./fio.1:2087:.BI (io_uring,libaio)cmdprio_hint \fR=\fPint[,int]
+./fio.1:2095:.BI (io_uring,libaio)cmdprio \fR=\fPint[,int]
+./fio.1:2105:.BI (io_uring,libaio)cmdprio_bssplit \fR=\fPstr[,str]
+./fio.1:2149:.BI (io_uring,io_uring_cmd)fixedbufs
+./fio.1:2155:.BI (io_uring,io_uring_cmd)nonvectored \fR=\fPint
+./fio.1:2159:.BI (io_uring,io_uring_cmd)force_async
+./fio.1:2160:Normal operation for io_uring is to try and issue an sqe as non-blocking first,
+./fio.1:2165:.BI (io_uring,io_uring_cmd,xnvme)hipri
+./fio.1:2172:.BI (io_uring,io_uring_cmd)registerfiles
+./fio.1:2178:.BI (io_uring,io_uring_cmd,xnvme)sqthread_poll
+./fio.1:2186:.BI (io_uring,io_uring_cmd)sqthread_poll_cpu \fR=\fPint
+./fio.1:2190:.BI (io_uring_cmd)cmd_type \fR=\fPstr
+./fio.1:2191:Specifies the type of uring passthrough command to be used. Supported
+./fio.1:2209:.BI (pvsync2,libaio,io_uring,io_uring_cmd)nowait \fR=\fPbool
+./fio.1:2225:.BI (io_uring_cmd,xnvme)fdp \fR=\fPbool
+./fio.1:2228:.BI (io_uring_cmd,xnvme)fdp_pli_select \fR=\fPstr
+./fio.1:2244:.BI (io_uring_cmd,xnvme)fdp_pli \fR=\fPstr
+./fio.1:2250:.BI (io_uring_cmd)md_per_io_size \fR=\fPint
+./fio.1:2253:.BI (io_uring_cmd)pi_act \fR=\fPint
+./fio.1:2263:.BI (io_uring_cmd)pi_chk \fR=\fPstr[,str][,str]
+./fio.1:2280:.BI (io_uring_cmd)apptag \fR=\fPint
+./fio.1:2284:.BI (io_uring_cmd)apptag_mask \fR=\fPint
+./fio.1:2441:During initialization, touch (create if do not exist) all objects (files).
+./fio.1:2521:will have a similar effect as (io_uring)hipri. Only SCSI READ and WRITE
+./fio.1:2704:.BI io_uring
+./fio.1:3113:\fBreplay_time_scale\fR which scales the trace during runtime and will not
+./fio.1:3554:When a job exits during the write phase of a verify workload, save its
+./fio.1:3578:later use during the verification phase. Experimental verify instead resets the
+./fio.1:3647:The values suring the rolling window will be collected with a period of this
+./fio.1:3889:in the stats is the first error that was hit during the run.
+./fio.1:3931:Sometimes you want to ignore some errors during test in that case you can
+./fio.1:4632:By measuring the amount of work completed by the thread, idleness of each CPU
+./fio.1:4683:some point during the run, and we'll run this test from the safety or our local
+./helper_thread.c:185: * Waits for an action from fd during at least timeout_ms. `fd` must be in
+./engines/sg.c:1387:	 * again when "type_check" is called during structure
+./engines/nvme.c:4: * io_uring_cmd engine.
+./engines/nvme.c:331:void fio_nvme_uring_cmd_trim_prep(struct nvme_uring_cmd *cmd, struct io_u *io_u,
+./engines/nvme.c:348:int fio_nvme_uring_cmd_prep(struct nvme_uring_cmd *cmd, struct io_u *io_u,
+./engines/nvme.c:355:	memset(cmd, 0, sizeof(struct nvme_uring_cmd));
+./engines/nvme.c:365:		fio_nvme_uring_cmd_trim_prep(cmd, io_u, dsm);
+./engines/nvme.c:397:void fio_nvme_pi_fill(struct nvme_uring_cmd *cmd, struct io_u *io_u,
+./engines/nvme.c:482:		log_err("ioengine io_uring_cmd only works with nvme ns "
+./engines/librpma_fio.h:230:				"A completion other than IBV_WC_SEND got during cleaning up the CQ from SENDs\n");
+./engines/nvme.h:4: * io_uring_cmd engine.
+./engines/nvme.h:14: * If the uapi headers installed on the system lacks nvme uring command
+./engines/nvme.h:18:struct nvme_uring_cmd {
+./engines/nvme.h:39:#define NVME_URING_CMD_IO	_IOWR('N', 0x80, struct nvme_uring_cmd)
+./engines/nvme.h:40:#define NVME_URING_CMD_IO_VEC	_IOWR('N', 0x81, struct nvme_uring_cmd)
+./engines/nvme.h:423:int fio_nvme_uring_cmd_prep(struct nvme_uring_cmd *cmd, struct io_u *io_u,
+./engines/nvme.h:426:void fio_nvme_pi_fill(struct nvme_uring_cmd *cmd, struct io_u *io_u,
+./engines/io_uring.d:1:engines/io_uring.o: engines/io_uring.c config-host.h engines/../fio.h \
+./engines/io_uring.d:32: engines/../lib/types.h engines/../os/linux/io_uring.h engines/cmdprio.h \
+./engines/io_uring.d:35:engines/io_uring.c:
+./engines/io_uring.d:114:engines/../os/linux/io_uring.h:
+./engines/rdma.c:917:	 * during which RECV side commits sufficient recv buffers.
+./engines/cmdprio.c:2: * IO priority handling helper functions common to the libaio and io_uring
+./engines/cmdprio.c:9: * Temporary array used during parsing. Will be freed after the corresponding
+./engines/cmdprio.c:18: * Temporary array used during init. Will be freed after the corresponding
+./engines/cmdprio.c:64: * cmdprio_prio during setup. This temporary array is freed after setup.
+./engines/xnvme.c:129:			"[emu,thrpool,io_uring,io_uring_cmd,libaio,posix,vfio,nil]",
+./engines/xnvme.c:265: * the ``--xnvme_async={thrpool,emu,posix,io_uring,libaio,nil}``.
+./engines/io_uring.c:2: * io_uring engine
+./engines/io_uring.c:4: * IO engine using the new native Linux aio io_uring interface. See:
+./engines/io_uring.c:6: * http://git.kernel.dk/cgit/linux-block/log/?h=io_uring
+./engines/io_uring.c:25:#include "../os/linux/io_uring.h"
+./engines/io_uring.c:32:enum uring_cmd_type {
+./engines/io_uring.c:50:	struct io_uring_cqe *cqes;
+./engines/io_uring.c:67:	struct io_uring_sqe *sqes;
+./engines/io_uring.c:105:	enum uring_cmd_type cmd_type;
+./engines/io_uring.c:215:		.help	= "Specify uring-cmd type",
+./engines/io_uring.c:220:			    .help = "Issue nvme-uring-cmd",
+./engines/io_uring.c:282:static int io_uring_enter(struct ioring_data *ld, unsigned int to_submit,
+./engines/io_uring.c:286:	return __do_syscall6(__NR_io_uring_enter, ld->ring_fd, to_submit,
+./engines/io_uring.c:289:	return syscall(__NR_io_uring_enter, ld->ring_fd, to_submit,
+./engines/io_uring.c:299:	struct io_uring_sqe *sqe;
+./engines/io_uring.c:343:		 * Since io_uring can have a submission context (sqthread_poll)
+./engines/io_uring.c:385:	struct nvme_uring_cmd *cmd;
+./engines/io_uring.c:386:	struct io_uring_sqe *sqe;
+./engines/io_uring.c:388:	/* only supports nvme_uring_cmd */
+./engines/io_uring.c:420:		sqe->uring_cmd_flags = IORING_URING_CMD_FIXED;
+./engines/io_uring.c:424:	cmd = (struct nvme_uring_cmd *)sqe->cmd;
+./engines/io_uring.c:425:	return fio_nvme_uring_cmd_prep(cmd, io_u,
+./engines/io_uring.c:433:	struct io_uring_cqe *cqe;
+./engines/io_uring.c:457:	struct io_uring_cqe *cqe;
+./engines/io_uring.c:530:			r = io_uring_enter(ld, 0, actual_min,
+./engines/io_uring.c:536:				td_verror(td, errno, "io_uring_enter");
+./engines/io_uring.c:550:	struct nvme_uring_cmd *cmd;
+./engines/io_uring.c:551:	struct io_uring_sqe *sqe;
+./engines/io_uring.c:559:	cmd = (struct nvme_uring_cmd *)sqe->cmd;
+./engines/io_uring.c:614:	if (!strcmp(td->io_ops->name, "io_uring_cmd") &&
+./engines/io_uring.c:664:	 * flagged as needing a kick, if so, call io_uring_enter(). This
+./engines/io_uring.c:674:			io_uring_enter(ld, ld->queued, 0,
+./engines/io_uring.c:687:		ret = io_uring_enter(ld, nr, 0, IORING_ENTER_GETEVENTS);
+./engines/io_uring.c:707:			td_verror(td, errno, "io_uring_enter submit");
+./engines/io_uring.c:742:static int fio_ioring_mmap(struct ioring_data *ld, struct io_uring_params *p)
+./engines/io_uring.c:762:		ld->mmap[1].len = 2 * p->sq_entries * sizeof(struct io_uring_sqe);
+./engines/io_uring.c:764:		ld->mmap[1].len = p->sq_entries * sizeof(struct io_uring_sqe);
+./engines/io_uring.c:772:					2 * p->cq_entries * sizeof(struct io_uring_cqe);
+./engines/io_uring.c:775:					p->cq_entries * sizeof(struct io_uring_cqe);
+./engines/io_uring.c:794:	struct io_uring_probe *p;
+./engines/io_uring.c:804:	p = calloc(1, sizeof(*p) + 256 * sizeof(struct io_uring_probe_op));
+./engines/io_uring.c:808:	ret = syscall(__NR_io_uring_register, ld->ring_fd,
+./engines/io_uring.c:828:	struct io_uring_params p;
+./engines/io_uring.c:865:	 * io_uring is always a single issuer, and we can defer task_work
+./engines/io_uring.c:871:	ret = syscall(__NR_io_uring_setup, depth, &p);
+./engines/io_uring.c:894:		ret = syscall(__NR_io_uring_register, ld->ring_fd,
+./engines/io_uring.c:908:	struct io_uring_params p;
+./engines/io_uring.c:949:	 * io_uring is always a single issuer, and we can defer task_work
+./engines/io_uring.c:955:	ret = syscall(__NR_io_uring_setup, depth, &p);
+./engines/io_uring.c:978:		ret = syscall(__NR_io_uring_register, ld->ring_fd,
+./engines/io_uring.c:1004:	ret = syscall(__NR_io_uring_register, ld->ring_fd,
+./engines/io_uring.c:1047:			log_err("fio: your kernel doesn't support io_uring\n");
+./engines/io_uring.c:1053:		struct io_uring_sqe *sqe;
+./engines/io_uring.c:1094:		struct io_uring_sqe *sqe;
+./engines/io_uring.c:1141:		log_err("fio: io_uring registered files require nr_files to "
+./engines/io_uring.c:1159:	if (!strcmp(td->io_ops->name, "io_uring_cmd") &&
+./engines/io_uring.c:1191:	 * For io_uring_cmd, trims are async operations unless we are operating
+./engines/io_uring.c:1194:	if (!strcmp(td->io_ops->name, "io_uring_cmd") && td_trim(td) &&
+./engines/io_uring.c:1212:	if (!strcmp(td->io_ops->name, "io_uring_cmd")) {
+./engines/io_uring.c:1234:	if (!strcmp(td->io_ops->name, "io_uring_cmd") &&
+./engines/io_uring.c:1421:static struct ioengine_ops ioengine_uring = {
+./engines/io_uring.c:1422:	.name			= "io_uring",
+./engines/io_uring.c:1442:static struct ioengine_ops ioengine_uring_cmd = {
+./engines/io_uring.c:1443:	.name			= "io_uring_cmd",
+./engines/io_uring.c:1471:	register_ioengine(&ioengine_uring);
+./engines/io_uring.c:1472:	register_ioengine(&ioengine_uring_cmd);
+./engines/io_uring.c:1477:	unregister_ioengine(&ioengine_uring);
+./engines/io_uring.c:1478:	unregister_ioengine(&ioengine_uring_cmd);
+./engines/cmdprio.h:3: * libaio and io_uring engines.
+./Makefile:243:		oslib/linux-dev-lookup.c engines/io_uring.c engines/nvme.c
+./Makefile:253:		oslib/linux-dev-lookup.c engines/io_uring.c engines/nvme.c \
+./Makefile:394:T_IOU_RING_OBJS = t/io_uring.o lib/rand.o lib/pattern.o lib/strntol.o
+./Makefile:395:T_IOU_RING_PROGS = t/io_uring
+./Makefile:606:t/io_uring.o: os/linux/io_uring.h
+./Makefile:607:t/io_uring: $(T_IOU_RING_OBJS)
+./Makefile:670:	@rm -f t/fio-btrace2fio t/io_uring t/read-to-pipe-async
+./.gitignore:20:t/io_uring
+./lex.yy.c:1518:	/* We don't actually know whether we did this switch during
+./lex.yy.c:1585: * such as during a yyrestart() or at EOF.
+./tools/fiograph/fiograph.conf:53:[ioengine_io_uring]
+./tools/fiograph/fiograph.conf:56:[ioengine_io_uring_cmd]
+./tools/plot/fio2gnuplot:198:			# Index will be used to remember what file was featuring what value
+./tools/hist/fiologparser_hist.py:290:        through all the histograms and figuring out which of their bins have
+./tools/hist/fio-histo-log-pctiles.py:300:    # don't return percentiles if no I/O was done during interval
+./HOWTO.rst:1468:	specific ways, ensuring that some parts of the data is more hot than others.
+./HOWTO.rst:2011:		**io_uring**
+./HOWTO.rst:2016:		**io_uring_cmd**
+./HOWTO.rst:2236:			Execute 3rd party tools. Could be used to perform monitoring during jobs runtime.
+./HOWTO.rst:2240:			flexibility to access GNU/Linux Kernel NVMe driver via libaio, IOCTLs, io_uring,
+./HOWTO.rst:2267:.. option:: cmdprio_percentage=int[,int] : [io_uring] [libaio]
+./HOWTO.rst:2279:.. option:: cmdprio_class=int[,int] : [io_uring] [libaio]
+./HOWTO.rst:2290:.. option:: cmdprio_hint=int[,int] : [io_uring] [libaio]
+./HOWTO.rst:2300:.. option:: cmdprio=int[,int] : [io_uring] [libaio]
+./HOWTO.rst:2313:.. option:: cmdprio_bssplit=str[,str] : [io_uring] [libaio]
+./HOWTO.rst:2350:.. option:: fixedbufs : [io_uring] [io_uring_cmd]
+./HOWTO.rst:2358:.. option:: nonvectored=int : [io_uring] [io_uring_cmd]
+./HOWTO.rst:2363:.. option:: force_async=int : [io_uring] [io_uring_cmd]
+./HOWTO.rst:2365:	Normal operation for io_uring is to try and issue an sqe as
+./HOWTO.rst:2370:.. option:: registerfiles : [io_uring] [io_uring_cmd]
+./HOWTO.rst:2377:.. option:: sqthread_poll : [io_uring] [io_uring_cmd] [xnvme]
+./HOWTO.rst:2387:.. option:: sqthread_poll_cpu=int : [io_uring] [io_uring_cmd]
+./HOWTO.rst:2392:.. option:: cmd_type=str : [io_uring_cmd]
+./HOWTO.rst:2394:	Specifies the type of uring passthrough command to be used. Supported
+./HOWTO.rst:2399:   [io_uring] [io_uring_cmd] [xnvme]
+./HOWTO.rst:2421:	This will have a similar effect as (io_uring)hipri. Only SCSI READ and
+./HOWTO.rst:2443:.. option:: nowait=bool : [pvsync2] [libaio] [io_uring] [io_uring_cmd]
+./HOWTO.rst:2463:.. option:: fdp=bool : [io_uring_cmd] [xnvme]
+./HOWTO.rst:2467:.. option:: fdp_pli_select=str : [io_uring_cmd] [xnvme]
+./HOWTO.rst:2482:.. option:: fdp_pli=str : [io_uring_cmd] [xnvme]
+./HOWTO.rst:2490:.. option:: md_per_io_size=int : [io_uring_cmd]
+./HOWTO.rst:2494:.. option:: pi_act=int : [io_uring_cmd]
+./HOWTO.rst:2506:.. option:: pi_chk=str[,str][,str] : [io_uring_cmd]
+./HOWTO.rst:2519:.. option:: apptag=int : [io_uring_cmd]
+./HOWTO.rst:2524:.. option:: apptag_mask=int : [io_uring_cmd]
+./HOWTO.rst:2693:        During initialization, touch (create if do not exist) all objects (files).
+./HOWTO.rst:2952:	**io_uring**
+./HOWTO.rst:2955:	**io_uring_cmd**
+./HOWTO.rst:3388:	:option:`replay_time_scale` which scales the trace during runtime and
+./HOWTO.rst:3846:	When a job exits during the write phase of a verify workload, save its
+./HOWTO.rst:3868:        for later use during the verification phase. Experimental verify
+./HOWTO.rst:3943:        The values during the rolling window will be collected with a period of
+./HOWTO.rst:4217:	in the stats is the first error that was hit during the run.
+./HOWTO.rst:4254:	Sometimes you want to ignore some errors during test in that case you can
+./HOWTO.rst:4917:By measuring the amount of work completed by the thread, idleness of each CPU
+./HOWTO.rst:4969:some point during the run, and we'll run this test from the safety or our local
+./config.log:295:Compiling test case nvme uring cmd
+./configure:67:    # Run the compiler, capturing its output to the log.
+./configure:2639:  return sizeof(struct nvme_uring_cmd);
+./configure:2642:if compile_prog "" "" "nvme uring cmd"; then
+./configure:2644:  nvme_uring_cmd="yes"
+./configure:2646:  nvme_uring_cmd="no"
+./configure:2648:print_config "NVMe uring command support" "$nvme_uring_cmd"
+./os/os-dragonfly.h:16:/* API changed during "5.3 development" */
+./os/linux/io_uring.h:3: * Header file for the io_uring interface.
+./os/linux/io_uring.h:17:struct io_uring_sqe {
+./os/linux/io_uring.h:49:		__u32		uring_cmd_flags;
+./os/linux/io_uring.h:107: * io_uring_setup() flags
+./os/linux/io_uring.h:202: * sqe->uring_cmd_flags
+./os/linux/io_uring.h:248:struct io_uring_cqe {
+./os/linux/io_uring.h:298:#define IORING_SQ_NEED_WAKEUP	(1U << 0) /* needs io_uring_enter wakeup */
+./os/linux/io_uring.h:321: * io_uring_enter(2) flags
+./os/linux/io_uring.h:330: * Passed in for io_uring_setup(2). Copied back with updated info on success
+./os/linux/io_uring.h:332:struct io_uring_params {
+./os/linux/io_uring.h:346: * io_uring_params->features flags
+./os/linux/io_uring.h:362: * io_uring_register(2) opcodes and arguments
+./os/linux/io_uring.h:392:	/* register/unregister io_uring fd with the ring */
+./os/linux/io_uring.h:406:/* deprecated, see struct io_uring_rsrc_update */
+./os/linux/io_uring.h:407:struct io_uring_files_update {
+./os/linux/io_uring.h:413:struct io_uring_rsrc_register {
+./os/linux/io_uring.h:421:struct io_uring_rsrc_update {
+./os/linux/io_uring.h:427:struct io_uring_rsrc_update2 {
+./os/linux/io_uring.h:441:struct io_uring_probe_op {
+./os/linux/io_uring.h:448:struct io_uring_probe {
+./os/linux/io_uring.h:453:	struct io_uring_probe_op ops[0];
+./os/linux/io_uring.h:456:struct io_uring_restriction {
+./os/linux/io_uring.h:468: * io_uring_restriction->opcode values
+./os/linux/io_uring.h:471:	/* Allow an io_uring_register(2) opcode */
+./os/linux/io_uring.h:486:struct io_uring_getevents_arg {
+./arch/arch.h:123:# ifndef __NR_io_uring_setup
+./arch/arch.h:124:#  define __NR_io_uring_setup		535
+./arch/arch.h:126:# ifndef __NR_io_uring_enter
+./arch/arch.h:127:#  define __NR_io_uring_enter		536
+./arch/arch.h:129:# ifndef __NR_io_uring_register
+./arch/arch.h:130:#  define __NR_io_uring_register	537
+./arch/arch.h:133:# ifndef __NR_io_uring_setup
+./arch/arch.h:134:#  define __NR_io_uring_setup		425
+./arch/arch.h:136:# ifndef __NR_io_uring_enter
+./arch/arch.h:137:#  define __NR_io_uring_enter		426
+./arch/arch.h:139:# ifndef __NR_io_uring_register
+./arch/arch.h:140:#  define __NR_io_uring_register	427
+./t/stest.c:70:					printf("failure allocating %u bytes at %lu allocated during sfree phase\n",
+./t/nvmept_pi.py:5:# Test fio's io_uring_cmd ioengine support for DIF/DIX end-to-end data
+./t/nvmept_pi.py:46:            "--ioengine=io_uring_cmd",
+./t/nvmept_pi.py:883:    Run tests using fio's io_uring_cmd ioengine to exercise end-to-end data
+./t/io_uring.d:1:t/io_uring.o: t/io_uring.c config-host.h t/../arch/arch.h \
+./t/io_uring.d:10: t/../lib/rand.h t/../minmax.h t/../os/linux/io_uring.h \
+./t/io_uring.d:35:t/io_uring.c:
+./t/io_uring.d:64:t/../os/linux/io_uring.h:
+./t/jobs/t0018.fio:5:ioengine=io_uring
+./t/run-fio-tests.py:748:        'requirements':     [Requirements.linux, Requirements.io_uring],
+./t/nvmept.py:5:# Test fio's io_uring_cmd ioengine with NVMe pass-through commands.
+./t/nvmept.py:37:            "--ioengine=io_uring_cmd",
+./t/nvmept.py:276:    """Run tests using fio's io_uring_cmd ioengine to send NVMe pass through commands."""
+./t/one-core-peak.sh:262:check_binary t/io_uring lscpu grep taskset cpupower awk tr xargs dmidecode
+./t/one-core-peak.sh:285:cmdline="taskset -c ${taskset_cores} t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n${nb_threads} ${latency_cmdline} ${drives}"
+./t/one-core-peak.sh:286:info "io_uring" "Running ${cmdline}"
+./t/zbd/test-zbd-support:20:	echo -e "\t-u Use io_uring ioengine in place of libaio"
+./t/zbd/test-zbd-support:42:	elif [ "$1" = "libaio" -a -n "$force_io_uring" ]; then
+./t/zbd/test-zbd-support:43:		echo -n "--ioengine=io_uring"
+./t/zbd/test-zbd-support:1090:# Verify that conv zones are not locked and only seq zones are locked during
+./t/zbd/test-zbd-support:1109:# Verify that conv zones are neither locked nor opened during random write on
+./t/zbd/test-zbd-support:1263:# Test that repeated async write job does not cause zone reset during writes
+./t/zbd/test-zbd-support:1509:force_io_uring=
+./t/zbd/test-zbd-support:1527:    -u) force_io_uring=1; shift;;
+./t/zbd/test-zbd-support:1538:if [ -n "$use_libzbc" -a -n "$force_io_uring" ]; then
+./t/io_uring.c:38:#include "../os/linux/io_uring.h"
+./t/io_uring.c:55:	struct io_uring_cqe *cqes;
+./t/io_uring.c:90:	struct io_uring_sqe *sqes;
+./t/io_uring.c:124:static long t_io_uring_page_size;
+./t/io_uring.c:160:struct io_uring_map_buffers {
+./t/io_uring.c:408:static int io_uring_map_buffers(struct submitter *s)
+./t/io_uring.c:410:	struct io_uring_map_buffers map = {
+./t/io_uring.c:420:	return syscall(__NR_io_uring_register, s->ring_fd,
+./t/io_uring.c:424:static int io_uring_register_buffers(struct submitter *s)
+./t/io_uring.c:429:	return syscall(__NR_io_uring_register, s->ring_fd,
+./t/io_uring.c:433:static int io_uring_register_files(struct submitter *s)
+./t/io_uring.c:446:	return syscall(__NR_io_uring_register, s->ring_fd,
+./t/io_uring.c:450:static int io_uring_setup(unsigned entries, struct io_uring_params *p)
+./t/io_uring.c:465:	ret = syscall(__NR_io_uring_setup, entries, p);
+./t/io_uring.c:485:static void io_uring_probe(int fd)
+./t/io_uring.c:487:	struct io_uring_probe *p;
+./t/io_uring.c:490:	p = calloc(1, sizeof(*p) + 256 * sizeof(struct io_uring_probe_op));
+./t/io_uring.c:494:	ret = syscall(__NR_io_uring_register, fd, IORING_REGISTER_PROBE, p, 256);
+./t/io_uring.c:507:static int io_uring_enter(struct submitter *s, unsigned int to_submit,
+./t/io_uring.c:513:	return __do_syscall6(__NR_io_uring_enter, s->enter_ring_fd, to_submit,
+./t/io_uring.c:516:	return syscall(__NR_io_uring_enter, s->enter_ring_fd, to_submit,
+./t/io_uring.c:569:	struct io_uring_sqe *sqe = &s->sqes[index];
+./t/io_uring.c:611:	struct io_uring_sqe *sqe = &s->sqes[index << 1];
+./t/io_uring.c:614:	struct nvme_uring_cmd *cmd;
+./t/io_uring.c:636:	cmd = (struct nvme_uring_cmd *)&sqe->cmd;
+./t/io_uring.c:645:		sqe->uring_cmd_flags = IORING_URING_CMD_FIXED;
+./t/io_uring.c:652:static int prep_more_ios_uring(struct submitter *s, int max_ios)
+./t/io_uring.c:728:static int reap_events_uring(struct submitter *s)
+./t/io_uring.c:731:	struct io_uring_cqe *cqe;
+./t/io_uring.c:780:static int reap_events_uring_pt(struct submitter *s)
+./t/io_uring.c:783:	struct io_uring_cqe *cqe;
+./t/io_uring.c:910:	struct io_uring_params p;
+./t/io_uring.c:931:	fd = io_uring_setup(depth, &p);
+./t/io_uring.c:933:		perror("io_uring_setup");
+./t/io_uring.c:938:	io_uring_probe(fd);
+./t/io_uring.c:948:		ret = io_uring_register_buffers(s);
+./t/io_uring.c:950:			perror("io_uring_register_buffers");
+./t/io_uring.c:955:			ret = io_uring_map_buffers(s);
+./t/io_uring.c:957:				perror("io_uring_map_buffers");
+./t/io_uring.c:964:		ret = io_uring_register_files(s);
+./t/io_uring.c:966:			perror("io_uring_register_files");
+./t/io_uring.c:983:		len = 2 * p.sq_entries * sizeof(struct io_uring_sqe);
+./t/io_uring.c:985:		len = p.sq_entries * sizeof(struct io_uring_sqe);
+./t/io_uring.c:992:			2 * p.cq_entries * sizeof(struct io_uring_cqe);
+./t/io_uring.c:995:			p.cq_entries * sizeof(struct io_uring_cqe);
+./t/io_uring.c:1022:	if (posix_memalign(&buf, t_io_uring_page_size, bs)) {
+./t/io_uring.c:1063:			sprintf(buf, "Engine=io_uring, sq_ring=%d, cq_ring=%d\n", *s->sq_ring.ring_entries, *s->cq_ring.ring_entries);
+./t/io_uring.c:1097:			struct io_uring_sqe *sqe = &s->sqes[i << 1];
+./t/io_uring.c:1099:			memset(&sqe->cmd, 0, sizeof(struct nvme_uring_cmd));
+./t/io_uring.c:1254:static void io_uring_unregister_ring(struct submitter *s)
+./t/io_uring.c:1256:	struct io_uring_rsrc_update up = {
+./t/io_uring.c:1260:	syscall(__NR_io_uring_register, s->ring_fd, IORING_UNREGISTER_RING_FDS,
+./t/io_uring.c:1264:static int io_uring_register_ring(struct submitter *s)
+./t/io_uring.c:1266:	struct io_uring_rsrc_update up = {
+./t/io_uring.c:1272:	ret = syscall(__NR_io_uring_register, s->ring_fd,
+./t/io_uring.c:1282:static void *submitter_uring_fn(void *data)
+./t/io_uring.c:1300:		io_uring_register_ring(s);
+./t/io_uring.c:1309:			prepped = prep_more_ios_uring(s, to_prep);
+./t/io_uring.c:1327:		 * Only need to call io_uring_enter if we're not using SQ thread
+./t/io_uring.c:1339:			ret = io_uring_enter(s, to_submit, to_wait, flags);
+./t/io_uring.c:1348:		 * through the io_uring_enter() above. For SQ thread poll, we
+./t/io_uring.c:1356:				r = reap_events_uring_pt(s);
+./t/io_uring.c:1358:				r = reap_events_uring(s);
+./t/io_uring.c:1398:		io_uring_unregister_ring(s);
+./t/io_uring.c:1775:	t_io_uring_page_size = sysconf(_SC_PAGESIZE);
+./t/io_uring.c:1776:	if (t_io_uring_page_size < 0)
+./t/io_uring.c:1777:		t_io_uring_page_size = 4096;
+./t/io_uring.c:1784:			pthread_create(&s->thread, NULL, submitter_uring_fn, s);
+./t/fiotestcommon.py:54:    _io_uring = False
+./t/fiotestcommon.py:81:                print("Unable to open '/proc/kallsyms' to probe for io_uring support")
+./t/fiotestcommon.py:83:                Requirements._io_uring = "io_uring_setup" in contents
+./t/fiotestcommon.py:109:                Requirements.io_uring,
+./t/fiotestcommon.py:134:    def io_uring(cls):
+./t/fiotestcommon.py:135:        """Is io_uring available?"""
+./t/fiotestcommon.py:136:        return Requirements._io_uring, "io_uring required"
