@@ -28,6 +28,106 @@
 
 #include <sys/stat.h>
 
+#define CHECK_FLAG(X) do {\
+    if(flags & X){\
+        printf ("\t %s: \t yes\n", #X);\
+    } else{\
+        printf ("\t %s: \t no\n", #X);\
+    }\
+}while(0);
+
+#define CHECK_FEATURE(X) do {\
+    if(features & X){\
+        printf ("\t %s: \t yes\n", #X);\
+    } else{\
+        printf ("\t %s: \t no\n", #X);\
+    }\
+}while(0);
+
+int utils_print_sqring_offsets(struct io_sqring_offsets *p){
+    if(p) {
+        int flags = p->flags;
+        printf("\tSize of the struct io_sqring_offsets is %lu \n", sizeof(*p));
+        printf("\thead: %u tail: %u ring_mask: 0x%x ring_entires: %u \n", p->head, p->tail, p->ring_mask, p->ring_entries);
+        printf("\tflags: 0x%x dropped: %u array: %u \n", p->flags, p->dropped, p->array);
+        // where to find these flags, in the io_uring.h file, line 410, sq_ring->flags 
+        CHECK_FLAG(IORING_SQ_NEED_WAKEUP);
+        CHECK_FLAG(IORING_SQ_CQ_OVERFLOW);
+        CHECK_FLAG(IORING_SQ_TASKRUN);
+    }
+    return 0;
+}
+
+static int utils_print_cqring_offsets(struct io_cqring_offsets *p){
+    if(p) {
+        int flags = p->flags;
+        printf("\tSize of the struct io_sqring_offsets is %lu \n", sizeof(*p));
+        printf("\thead: %u tail: %u ring_mask: 0x%x ring_entires: %u \n", p->head, p->tail, p->ring_mask, p->ring_entries);
+        printf("\toverflow: %u cqes: %u flasgs: 0x%x \n", p->overflow, p->cqes, p->flags);
+        // where to find these flags, in the io_uring.h file, line 432, cq_ring->flags 
+        CHECK_FLAG(IORING_CQ_EVENTFD_DISABLED);
+    }
+    return 0;
+}
+
+static int utils_print_setup_flags(__u32 flags){
+    printf("---- showing flags in struct io_uring_params ---- \n");
+    printf("raw hex value of the io_uring_params flag: 0x%x \n", flags);
+    CHECK_FLAG(IORING_SETUP_IOPOLL);
+    CHECK_FLAG(IORING_SETUP_SQPOLL);
+    CHECK_FLAG(IORING_SETUP_SQ_AFF);
+    CHECK_FLAG(IORING_SETUP_CQSIZE);   
+    CHECK_FLAG(IORING_SETUP_CLAMP);
+    CHECK_FLAG(IORING_SETUP_ATTACH_WQ);
+    CHECK_FLAG(IORING_SETUP_R_DISABLED);
+    CHECK_FLAG(IORING_SETUP_SUBMIT_ALL);
+    CHECK_FLAG(IORING_SETUP_COOP_TASKRUN);
+    CHECK_FLAG(IORING_SETUP_TASKRUN_FLAG);
+    CHECK_FLAG(IORING_SETUP_SQE128);
+    CHECK_FLAG(IORING_SETUP_CQE32);
+    CHECK_FLAG(IORING_SETUP_SINGLE_ISSUER);    
+    CHECK_FLAG(IORING_SETUP_DEFER_TASKRUN);
+    return 0;
+    printf("==== **** ==== \n");
+}
+
+static int utils_print_kernel_features(__u32 features){
+    printf("---- showing features in struct io_uring_params ---- \n");
+    printf("raw hex value of the io_uring_params feature : 0x%x \n", features);
+    CHECK_FEATURE(IORING_FEAT_SINGLE_MMAP);
+    CHECK_FEATURE(IORING_FEAT_NODROP);
+    CHECK_FEATURE(IORING_FEAT_SUBMIT_STABLE);
+    CHECK_FEATURE(IORING_FEAT_RW_CUR_POS);
+    CHECK_FEATURE(IORING_FEAT_CUR_PERSONALITY);
+    CHECK_FEATURE(IORING_FEAT_FAST_POLL);
+    CHECK_FEATURE(IORING_FEAT_POLL_32BITS);
+    CHECK_FEATURE(IORING_FEAT_SQPOLL_NONFIXED);
+    // This feature is renmaed in the future kernel verions, this is done for 6.3 
+    // CHECK_FEATURE(IORING_FEAT_ENTER_EXT_ARG); -- https://man.archlinux.org/man/io_uring_setup.2.en 
+    CHECK_FEATURE(IORING_FEAT_EXT_ARG);  
+    CHECK_FEATURE(IORING_FEAT_NATIVE_WORKERS);
+    CHECK_FEATURE(IORING_FEAT_RSRC_TAGS);
+    CHECK_FEATURE(IORING_FEAT_CQE_SKIP);   
+    CHECK_FEATURE(IORING_FEAT_LINKED_FILE);
+    CHECK_FEATURE(IORING_FEAT_REG_REG_RING);
+    printf("==== **** ==== \n");
+    return 0;
+}
+
+static int utils_print_iou_params(struct io_uring_params *p) {
+    if(p) {
+        printf("Size of the struct io_uring_params is (bytes): %lu \n", sizeof(*p));
+        printf("sq_entries: %u cq_entries: %u \n", p->sq_entries, p->cq_entries);        
+        utils_print_setup_flags(p->flags);    
+        utils_print_kernel_features(p->features);
+        printf("sq_thread_cpu: %u sq_thread_idle: %u \n", p->sq_thread_cpu, p->sq_thread_idle);        
+        printf("features 0x%x \n", p->features);
+        utils_print_sqring_offsets(&p->sq_off);
+        utils_print_cqring_offsets(&p->cq_off);
+    }    
+    return 0;        
+}
+
 enum uring_cmd_type {
 	FIO_URING_CMD_NVME = 1,
 };
@@ -84,7 +184,7 @@ struct ioring_data {
 
 struct ioring_options {
 	struct thread_data *td;
-	unsigned int hipri;
+	unsigned int hipri;    
 	struct cmdprio_options cmdprio_options;
 	unsigned int fixedbufs;
 	unsigned int registerfiles;
@@ -102,6 +202,9 @@ struct ioring_options {
 	unsigned int prchk;
 	char *pi_chk;
 	enum uring_cmd_type cmd_type;
+    //
+    unsigned int coop_taskrun;
+    unsigned int atr_debug;
 };
 
 static const int ddir_to_op[2][2] = {
@@ -124,7 +227,25 @@ static int fio_ioring_sqpoll_cb(void *data, unsigned long long *val)
 }
 
 static struct fio_option options[] = {
+   	{
+		.name	= "atr_debug",
+		.lname	= "atr debug",
+		.type	= FIO_OPT_STR_SET,
+		.off1	= offsetof(struct ioring_options, atr_debug),
+		.help	= "enable atr debugging prints",
+		.category = FIO_OPT_C_ENGINE,
+		.group	= FIO_OPT_G_IOURING,
+	},
 	{
+		.name	= "coop_taskrun",
+		.lname	= "IORING_SETUP_COOP_TASKRUN",
+		.type	= FIO_OPT_STR_SET,
+		.off1	= offsetof(struct ioring_options, coop_taskrun),
+		.help	= "sets IORING_SETUP_COOP_TASKRUN, see https://man.archlinux.org/man/io_uring_setup.2.en#IORING_SETUP_COOP_TASKRUN",
+		.category = FIO_OPT_C_ENGINE,
+		.group	= FIO_OPT_G_IOURING,
+	},
+    {
 		.name	= "hipri",
 		.lname	= "High Priority",
 		.type	= FIO_OPT_STR_SET,
@@ -744,7 +865,7 @@ static int fio_ioring_queue_init(struct thread_data *td)
 	int ret;
 
 	memset(&p, 0, sizeof(p));
-
+    printf("atr:remove hipri: %d sqpoll: %d coop_taskrun %d \n", o->hipri, o->sqpoll_thread, o->coop_taskrun);
 	if (o->hipri)
 		p.flags |= IORING_SETUP_IOPOLL;
 	if (o->sqpoll_thread) {
@@ -774,28 +895,36 @@ static int fio_ioring_queue_init(struct thread_data *td)
 	 * Setup COOP_TASKRUN as we don't need to get IPI interrupted for
 	 * completing IO operations.
 	 */
-	p.flags |= IORING_SETUP_COOP_TASKRUN;
+    if(o->coop_taskrun){
+        p.flags |= IORING_SETUP_COOP_TASKRUN;
+    }
 
 	/*
+    * atr: FIXME - can benchmark the cose of this? 
 	 * io_uring is always a single issuer, and we can defer task_work
 	 * runs until we reap events.
 	 */
 	p.flags |= IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN;
 
 retry:
-	ret = syscall(__NR_io_uring_setup, depth, &p);
+	ret = syscall(__NR_io_uring_setup, depth, &p);    
 	if (ret < 0) {
 		if (errno == EINVAL && p.flags & IORING_SETUP_DEFER_TASKRUN) {
 			p.flags &= ~IORING_SETUP_DEFER_TASKRUN;
-			p.flags &= ~IORING_SETUP_SINGLE_ISSUER;
-			goto retry;
+			p.flags &= ~IORING_SETUP_SINGLE_ISSUER;            
+            printf("ERROR (atr): issue with defer taskrun, perhaps polling options are set, please disable them\n");
+            return -EINVAL;
+			//goto retry;
 		}
 		if (errno == EINVAL && p.flags & IORING_SETUP_COOP_TASKRUN) {
 			p.flags &= ~IORING_SETUP_COOP_TASKRUN;
-			goto retry;
+            printf("ERROR: (atr): issue with coop taskrun, perhaps polling options are set, please disable them \n");
+            return -EINVAL;
+			//goto retry;
 		}
 		if (errno == EINVAL && p.flags & IORING_SETUP_CQSIZE) {
 			p.flags &= ~IORING_SETUP_CQSIZE;
+            printf("Error (atr): issue with setup CQ size \n");
 			goto retry;
 		}
 		return ret;
@@ -811,6 +940,10 @@ retry:
 		if (ret < 0)
 			return ret;
 	}
+
+    if(o->atr_debug){
+        utils_print_iou_params(&p);
+    }
 
 	return fio_ioring_mmap(ld, &p);
 }
