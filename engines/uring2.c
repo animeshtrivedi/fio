@@ -917,6 +917,7 @@ static int fio_ioring_init(struct thread_data *td)
 	struct ioring_data *ld;
 	unsigned long long md_size;
 	int ret;
+    printf("atr: setting up the uring2 engine (%d) \n",system("git log | head -1 | awk '{print \"git id:\", $2}'"));   
 
 	/* sqthread submission requires registered files */
 	if (o->sqpoll_thread)
