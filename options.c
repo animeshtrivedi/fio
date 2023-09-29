@@ -596,9 +596,21 @@ static int str_rw_cb(void *data, const char *str)
 	if (!nr)
 		return 0;
 
-	if (td_random(td))
-		o->ddir_seq_nr = atoi(nr);
-	else {
+	if (td_random(td)) {
+		long long val;
+
+		if (str_to_decimal(nr, &val, 1, o, 0, 0)) {
+			log_err("fio: randrw postfix parsing failed\n");
+			free(nr);
+			return 1;
+		}
+		if ((val <= 0) || (val > UINT_MAX)) {
+			log_err("fio: randrw postfix parsing out of range\n");
+			free(nr);
+			return 1;
+		}
+		o->ddir_seq_nr = (unsigned int) val;
+	} else {
 		long long val;
 
 		if (str_to_decimal(nr, &val, 1, o, 0, 0)) {
@@ -4601,16 +4613,8 @@ struct fio_option fio_options[FIO_MAX_OPTS] = {
 	},
 #endif
 	{
-		.name = "log_unix_epoch",
-		.lname = "Log epoch unix",
-		.type = FIO_OPT_BOOL,
-		.off1 = offsetof(struct thread_options, log_unix_epoch),
-		.help = "Use Unix time in log files",
-		.category = FIO_OPT_C_LOG,
-		.group = FIO_OPT_G_INVALID,
-	},
-	{
 		.name = "log_alternate_epoch",
+		.alias = "log_unix_epoch",
 		.lname = "Log epoch alternate",
 		.type = FIO_OPT_BOOL,
 		.off1 = offsetof(struct thread_options, log_alternate_epoch),
@@ -4623,7 +4627,7 @@ struct fio_option fio_options[FIO_MAX_OPTS] = {
 		.lname = "Log alternate epoch clock_id",
 		.type = FIO_OPT_INT,
 		.off1 = offsetof(struct thread_options, log_alternate_epoch_clock_id),
-		.help = "If log_alternate_epoch or log_unix_epoch is true, this option specifies the clock_id from clock_gettime whose epoch should be used. If neither of those is true, this option has no effect. Default value is 0, or CLOCK_REALTIME",
+		.help = "If log_alternate_epoch is true, this option specifies the clock_id from clock_gettime whose epoch should be used. If log_alternate_epoch is false, this option has no effect. Default value is 0, or CLOCK_REALTIME",
 		.category = FIO_OPT_C_LOG,
 		.group = FIO_OPT_G_INVALID,
 	},
@@ -4948,6 +4952,16 @@ struct fio_option fio_options[FIO_MAX_OPTS] = {
 		.type	= FIO_OPT_INT,
 		.off1	= offsetof(struct thread_options, gtod_cpu),
 		.help	= "Set up dedicated gettimeofday() thread on this CPU",
+		.verify	= gtod_cpu_verify,
+		.category = FIO_OPT_C_GENERAL,
+		.group	= FIO_OPT_G_CLOCK,
+	},
+	{
+		.name	= "job_start_clock_id",
+		.lname	= "Job start clock_id",
+		.type	= FIO_OPT_INT,
+		.off1	= offsetof(struct thread_options, job_start_clock_id),
+		.help	= "The clock_id passed to the call to clock_gettime used to record job_start in the json output format. Default is 0, or CLOCK_REALTIME",
 		.verify	= gtod_cpu_verify,
 		.category = FIO_OPT_C_GENERAL,
 		.group	= FIO_OPT_G_CLOCK,
